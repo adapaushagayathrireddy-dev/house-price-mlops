@@ -1,10 +1,9 @@
+pytest
 fastapi
 uvicorn
+streamlit
+scikit-learn
 pandas
 numpy
-scikit-learn
 joblib
-pydantic
 mlflow
-streamlit
-requests
