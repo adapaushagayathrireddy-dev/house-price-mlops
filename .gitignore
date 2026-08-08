@@ -5,3 +5,5 @@ __pycache__/
 mlruns/
 mlartifacts/
 .envmlflow.db
+
+mlflow.db
