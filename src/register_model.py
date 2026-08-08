@@ -1,4 +1,4 @@
-"""Register the best MLflow model."""
+"""Find the best MLflow run and save its model for the API."""
 
 from __future__ import annotations
 
@@ -12,11 +12,10 @@ from mlflow.tracking import MlflowClient
 
 
 EXPERIMENT_NAME = "house-price-prediction"
-REGISTERED_MODEL_NAME = "house-price-model"
 
 
 def register_best_model() -> None:
-    """Find the best run, register its model, and save a pickle."""
+    """Find the best run and save its model as a pickle."""
 
     tracking_uri = os.getenv(
         "MLFLOW_TRACKING_URI",
@@ -41,7 +40,7 @@ def register_best_model() -> None:
     )
 
     if not runs:
-        raise RuntimeError("No runs found")
+        raise RuntimeError("No MLflow runs found")
 
     best_run = runs[0]
 
@@ -53,35 +52,22 @@ def register_best_model() -> None:
     print(f"Model type: {model_type}")
     print(f"RMSE: {rmse:.3f}")
 
-    # Use the model from the BEST RUN
+    # Load the model from the best MLflow run.
     model_uri = f"runs:/{run_id}/model"
 
-    print(f"Model URI: {model_uri}")
-
-    # Register model in MLflow
-    result = mlflow.register_model(
-        model_uri=model_uri,
-        name=REGISTERED_MODEL_NAME,
-    )
-
-    print()
-    print("Model registered successfully!")
-    print(f"Name: {result.name}")
-    print(f"Version: {result.version}")
-
-    # Save plain pickle for the API
-    # register_model.py is inside src/,
-    # so ../models points to the project root models/ folder.
-    models_dir = Path("../models")
-    models_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Loading model from: {model_uri}")
 
     loaded_model = mlflow.sklearn.load_model(model_uri)
+
+    # Save the model for FastAPI/Docker.
+    models_dir = Path("../models")
+    models_dir.mkdir(parents=True, exist_ok=True)
 
     pickle_path = models_dir / "best_model.pkl"
 
     joblib.dump(loaded_model, pickle_path)
 
-    print(f"Saved {pickle_path} for API use")
+    print(f"Saved model to: {pickle_path}")
 
 
 if __name__ == "__main__":

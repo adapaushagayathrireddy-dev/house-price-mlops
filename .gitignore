@@ -4,4 +4,4 @@ __pycache__/
 .pytest_cache/
 mlruns/
 mlartifacts/
-.env
+.envmlflow.db
