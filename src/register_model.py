@@ -19,7 +19,7 @@ def register_best_model() -> None:
 
     tracking_uri = os.getenv(
         "MLFLOW_TRACKING_URI",
-        "file:./mlruns",
+        "file:../mlruns",
     )
 
     mlflow.set_tracking_uri(tracking_uri)
